@@ -54,11 +54,15 @@ public class Product {
      * Sells a certain amount of a product (reduces the quantity)
      */
     public void sell(int amount) {
-        quantity = quantity - amount;
+        if (amount <= quantity) {
+            quantity -= amount;
+        } else {
+            System.out.println("Not enough stock to sell " + amount + " of " + name);
+        }
     }
 
     /**
-     * Restocks a certain amount of a product (adds to the quantity)=
+     * Restocks a certain amount of a product (adds to the quantity)
      */
     public void restock(int amount) {
         quantity = quantity + amount;

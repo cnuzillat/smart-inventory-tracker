@@ -1,5 +1,6 @@
 package src;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 /**
@@ -42,6 +43,9 @@ public class InventoryManager {
                 System.out.println("Low stock product: " + name);
             }
         }
+        else {
+            System.out.println("Product not found: " + name);
+        }
     }
 
     /**
@@ -64,5 +68,18 @@ public class InventoryManager {
         for (Product product : inventory.values()) {
             System.out.println(product);
         }
+    }
+
+    public void showLowStockItems() {
+        System.out.println("Low stock items:");
+        for (Product product : inventory.values()) {
+            if (product.isLowStock()) {
+                System.out.println(product);
+            }
+        }
+    }
+
+    public Collection<Product> getAllProducts() {
+        return inventory.values();
     }
 }
