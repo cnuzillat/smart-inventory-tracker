@@ -19,6 +19,8 @@ public class InventoryGUI extends Application {
         TextField qtyField = new TextField();
         Label thresholdLabel = new Label("Low Stock Threshold:");
         TextField thresholdField = new TextField();
+        Label idLabel = new Label("Product ID:");
+        TextField idField = new TextField();
         TextArea inventoryArea = new TextArea();
         inventoryArea.setEditable(false);
         Button addButton = new Button("Add Product");
@@ -27,7 +29,8 @@ public class InventoryGUI extends Application {
                 String name = nameField.getText();
                 int qty = Integer.parseInt(qtyField.getText());
                 int threshold = Integer.parseInt(thresholdField.getText());
-                manager.addProduct(name, qty, threshold);
+                int id = Integer.parseInt(idField.getText());
+                manager.addProduct(name, qty, threshold, id);
                 inventoryArea.setText(getInventoryText());
                 nameField.clear();
                 qtyField.clear();
@@ -69,6 +72,7 @@ public class InventoryGUI extends Application {
                 nameLabel, nameField,
                 qtyLabel, qtyField,
                 thresholdLabel, thresholdField,
+                idLabel, idField,
                 addButton, inventoryArea,
                 updateLabel, updateNameLabel,
                 updateNameField, updateQtyLabel,

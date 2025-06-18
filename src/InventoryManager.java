@@ -25,8 +25,8 @@ public class InventoryManager {
      * @param quantity the amount of product in stock
      * @param quantityThreshold the threshold that determines if a product is low stock
      */
-    public void addProduct(String name, int quantity, int quantityThreshold) {
-        inventory.put(name, new Product(name, quantity, quantityThreshold));
+    public void addProduct(String name, int quantity, int quantityThreshold, int id) {
+        inventory.put(name, new Product(name, quantity, quantityThreshold, id));
     }
 
     /**

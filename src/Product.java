@@ -6,9 +6,10 @@ package src;
  * @author Chloe Nuzillat
  */
 public class Product {
-    private String name;
+    private final String name;
     private int quantity;
-    private int quantityThreshold;
+    private final int quantityThreshold;
+    private final int id;
 
     /**
      * Product constructor
@@ -17,10 +18,11 @@ public class Product {
      * @param quantity how much product is in stock
      * @param threshold what quantity amount is considered low stock
      */
-    public Product(String name, int quantity, int threshold) {
+    public Product(String name, int quantity, int threshold, int id) {
         this.name = name;
         this.quantity = quantity;
         this.quantityThreshold = threshold;
+        this.id = id;
     }
 
     /**
@@ -39,6 +41,10 @@ public class Product {
      */
     public int getQuantity() {
         return quantity;
+    }
+
+    public int getId() {
+        return id;
     }
 
     /**
@@ -84,6 +90,6 @@ public class Product {
      */
     @Override
     public String toString() {
-        return name + ": " + quantity + " (Low threshold: " + quantityThreshold + ")";
+        return name + ": " + quantity + " (Low threshold: " + quantityThreshold + ") - " + id;
     }
 }
