@@ -48,6 +48,12 @@ public class Product implements Serializable {
         return quantity;
     }
 
+    /**
+     *
+     * Gets the id of the product
+     *
+     * @return the id
+     */
     public int getId() {
         return id;
     }

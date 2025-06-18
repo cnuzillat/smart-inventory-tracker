@@ -7,9 +7,19 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+/**
+ * GUI for the inventory manager
+ *
+ * @author Chloe Nuzillat
+ */
 public class InventoryGUI extends Application {
     InventoryManager manager = new InventoryManager();
 
+    /**
+     * Starts the GUI by creating an area to add new products and edit existing ones
+     *
+     * @param primaryStage the stage
+     */
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Inventory Manager");
@@ -96,6 +106,11 @@ public class InventoryGUI extends Application {
         primaryStage.show();
     }
 
+    /**
+     * Helper method for the start method that return the entire inventory in a String
+     *
+     * @return the inventory
+     */
     private String getInventoryText() {
         StringBuilder sb = new StringBuilder();
         for (Product p : manager.getAllProducts()) {
@@ -104,6 +119,11 @@ public class InventoryGUI extends Application {
         return sb.toString();
     }
 
+    /**
+     * The main method
+     *
+     * @param args the arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }

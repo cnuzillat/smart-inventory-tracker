@@ -20,6 +20,9 @@ public class InventoryManager {
         loadInventory();
     }
 
+    /**
+     * Loads existing inventory from inventory.dat
+     */
     @SuppressWarnings("unchecked")
     public void loadInventory() {
         try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("inventory.dat"))) {
@@ -30,6 +33,9 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Saves inventory changes to inventory.dat
+     */
     public void saveInventory() {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("inventory.dat"))) {
             out.writeObject(inventory);
@@ -90,6 +96,9 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Prints out all low stock items
+     */
     public void showLowStockItems() {
         System.out.println("Low stock items:");
         for (Product product : inventory.values()) {
@@ -99,6 +108,10 @@ public class InventoryManager {
         }
     }
 
+    /**
+     * Returns the entire inventory
+     * @return all products
+     */
     public Collection<Product> getAllProducts() {
         return inventory.values();
     }
