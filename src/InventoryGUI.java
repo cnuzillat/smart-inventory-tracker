@@ -23,6 +23,7 @@ public class InventoryGUI extends Application {
         TextField idField = new TextField();
         TextArea inventoryArea = new TextArea();
         inventoryArea.setEditable(false);
+        inventoryArea.setText(getInventoryText());
         Button addButton = new Button("Add Product");
         addButton.setOnAction(e -> {
             try {
@@ -35,36 +36,44 @@ public class InventoryGUI extends Application {
                 nameField.clear();
                 qtyField.clear();
                 thresholdField.clear();
+                idField.clear();
             } catch (NumberFormatException ex) {
                 inventoryArea.setText("Please enter valid numbers.");
             }
+            manager.saveInventory();
         });
         Label updateLabel = new Label("Update Existing Product:");
-        Label updateNameLabel = new Label("Product Name:");
-        TextField updateNameField = new TextField();
+        Label updateIDLabel = new Label("Product ID:");
+        TextField updateIDField = new TextField();
         Label updateQtyLabel = new Label("Quantity:");
         TextField updateQtyField = new TextField();
         Button sellButton = new Button("Sell Product");
         sellButton.setOnAction(e -> {
-            String name = updateNameField.getText();
+            int id = Integer.parseInt(updateIDField.getText());
             try {
                 int qty = Integer.parseInt(updateQtyField.getText());
-                manager.sellProduct(name, qty);
+                manager.sellProduct(id, qty);
                 inventoryArea.setText(getInventoryText());
+                updateIDField.clear();
+                updateQtyField.clear();
             } catch (NumberFormatException ex) {
                 inventoryArea.setText("Please enter a valid quantity to sell.");
             }
+            manager.saveInventory();
         });
         Button restockButton = new Button("Restock Product");
         restockButton.setOnAction(e -> {
-            String name = updateNameField.getText();
+            int id = Integer.parseInt(updateIDField.getText());
             try {
                 int qty = Integer.parseInt(updateQtyField.getText());
-                manager.restockProduct(name, qty);
+                manager.restockProduct(id, qty);
                 inventoryArea.setText(getInventoryText());
+                updateIDField.clear();
+                updateQtyField.clear();
             } catch (NumberFormatException ex) {
                 inventoryArea.setText("Please enter a valid quantity to restock.");
             }
+            manager.saveInventory();
         });
         VBox layout = new VBox(10);
         layout.setPadding(new Insets(10));
@@ -74,13 +83,16 @@ public class InventoryGUI extends Application {
                 thresholdLabel, thresholdField,
                 idLabel, idField,
                 addButton, inventoryArea,
-                updateLabel, updateNameLabel,
-                updateNameField, updateQtyLabel,
+                updateLabel, updateIDLabel,
+                updateIDField, updateQtyLabel,
                 updateQtyField, sellButton,
                 restockButton
         );
         Scene scene = new Scene(layout, 600, 600);
         primaryStage.setScene(scene);
+        primaryStage.setOnCloseRequest(e -> {
+            manager.saveInventory();
+        });
         primaryStage.show();
     }
 

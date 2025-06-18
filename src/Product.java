@@ -1,11 +1,16 @@
 package src;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * Class representation of a product
  *
  * @author Chloe Nuzillat
  */
-public class Product {
+public class Product implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
     private final String name;
     private int quantity;
     private final int quantityThreshold;

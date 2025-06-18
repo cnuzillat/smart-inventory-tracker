@@ -1,5 +1,6 @@
 package src;
 
+import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -9,13 +10,32 @@ import java.util.HashMap;
  * @author Chloe Nuzillat
  */
 public class InventoryManager {
-    private HashMap<String, Product> inventory;
+    private HashMap<Integer, Product> inventory;
 
     /**
      * Constructs the inventory manager
      */
     public InventoryManager() {
         inventory = new HashMap<>();
+        loadInventory();
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadInventory() {
+        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream("inventory.dat"))) {
+            inventory = (HashMap<Integer, Product>) in.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("No existing inventory found. Starting fresh.");
+            inventory = new HashMap<>();
+        }
+    }
+
+    public void saveInventory() {
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("inventory.dat"))) {
+            out.writeObject(inventory);
+        } catch (IOException e) {
+            System.out.println("Error saving inventory: " + e.getMessage());
+        }
     }
 
     /**
@@ -26,36 +46,36 @@ public class InventoryManager {
      * @param quantityThreshold the threshold that determines if a product is low stock
      */
     public void addProduct(String name, int quantity, int quantityThreshold, int id) {
-        inventory.put(name, new Product(name, quantity, quantityThreshold, id));
+        inventory.put(id, new Product(name, quantity, quantityThreshold, id));
     }
 
     /**
      * Removes a certain amount of product from the inventory
      *
-     * @param name the name of the product
+     * @param id the id of the product
      * @param quantity the amount of product in stock
      */
-    public void sellProduct(String name, int quantity) {
-        Product product = inventory.get(name);
+    public void sellProduct(int id, int quantity) {
+        Product product = inventory.get(id);
         if (product != null) {
             product.sell(quantity);
             if (product.isLowStock()) {
-                System.out.println("Low stock product: " + name);
+                System.out.println("Low stock product: " + product.getName());
             }
         }
         else {
-            System.out.println("Product not found: " + name);
+            System.out.println("Product not found");
         }
     }
 
     /**
      * Adds a certain amount of product to the inventory
      *
-     * @param name the name of the product
      * @param quantity the amount of product in stock
+     * @param id the id of the product
      */
-    public void restockProduct(String name, int quantity) {
-        Product product = inventory.get(name);
+    public void restockProduct(int quantity, int id) {
+        Product product = inventory.get(id);
         if (product != null) {
             product.restock(quantity);
         }
