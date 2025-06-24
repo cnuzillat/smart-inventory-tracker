@@ -35,6 +35,15 @@ public class InventoryGUI extends Application {
         TextField idField = new TextField();
         Button addButton = new Button("Add Product");
 
+        Label addSectionTitle = new Label("Add New Product");
+        addSectionTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        Label updateSectionTitle = new Label("Update Inventory");
+        updateSectionTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+        Label tableSectionTitle = new Label("Current Inventory");
+        tableSectionTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
         TableView<Product> tableView = new TableView<>();
         TableColumn<Product, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
@@ -133,7 +142,6 @@ public class InventoryGUI extends Application {
         GridPane form = new GridPane();
         form.setHgap(10);
         form.setVgap(10);
-        form.setPadding(new Insets(10));
 
         form.add(nameLabel, 0, 0);
         form.add(nameField, 1, 0);
@@ -147,7 +155,8 @@ public class InventoryGUI extends Application {
 
         VBox layout = new VBox(20);
         layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(form, tableView, updateSection);
+        layout.getChildren().addAll(addSectionTitle, form, tableSectionTitle, tableView, updateSectionTitle,
+                updateSection);
 
         Scene scene = new Scene(layout, 600, 600);
         primaryStage.setScene(scene);
