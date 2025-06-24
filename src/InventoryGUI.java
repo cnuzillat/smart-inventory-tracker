@@ -1,6 +1,8 @@
 package src;
 
 import javafx.application.Application;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -31,10 +33,24 @@ public class InventoryGUI extends Application {
         TextField thresholdField = new TextField();
         Label idLabel = new Label("Product ID:");
         TextField idField = new TextField();
-        TextArea inventoryArea = new TextArea();
-        inventoryArea.setEditable(false);
-        inventoryArea.setText(getInventoryText());
         Button addButton = new Button("Add Product");
+
+        TableView<Product> tableView = new TableView<>();
+        TableColumn<Product, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
+
+        TableColumn<Product, Integer> qtyCol = new TableColumn<>("Quantity");
+        qtyCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getQuantity()).asObject());
+
+        TableColumn<Product, Integer> thresholdCol = new TableColumn<>("Threshold");
+        thresholdCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getQuantityThreshold()).asObject());
+
+        TableColumn<Product, Integer> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId()).asObject());
+
+        tableView.getColumns().addAll(nameCol, qtyCol, thresholdCol, idCol);
+        tableView.getItems().addAll(manager.getAllProducts());
+
         addButton.setOnAction(e -> {
             try {
                 String name = nameField.getText();
@@ -42,13 +58,13 @@ public class InventoryGUI extends Application {
                 int threshold = Integer.parseInt(thresholdField.getText());
                 int id = Integer.parseInt(idField.getText());
                 manager.addProduct(name, qty, threshold, id);
-                inventoryArea.setText(getInventoryText());
+                tableView.getItems().setAll(manager.getAllProducts());
                 nameField.clear();
                 qtyField.clear();
                 thresholdField.clear();
                 idField.clear();
             } catch (NumberFormatException ex) {
-                inventoryArea.setText("Please enter valid numbers.");
+                showAlert("Invalid Input", "Please enter valid numbers.", Alert.AlertType.ERROR);
             }
             manager.saveInventory();
         });
@@ -63,41 +79,76 @@ public class InventoryGUI extends Application {
             try {
                 int qty = Integer.parseInt(updateQtyField.getText());
                 manager.sellProduct(id, qty);
-                inventoryArea.setText(getInventoryText());
+                tableView.getItems().setAll(manager.getAllProducts());
                 updateIDField.clear();
                 updateQtyField.clear();
             } catch (NumberFormatException ex) {
-                inventoryArea.setText("Please enter a valid quantity to sell.");
+                showAlert("Invalid Input", "Please enter a valid quantity to sell.",
+                        Alert.AlertType.ERROR);
             }
             manager.saveInventory();
         });
         Button restockButton = new Button("Restock Product");
         restockButton.setOnAction(e -> {
-            int id = Integer.parseInt(updateIDField.getText());
             try {
+                int id = Integer.parseInt(updateIDField.getText());
                 int qty = Integer.parseInt(updateQtyField.getText());
                 manager.restockProduct(id, qty);
-                inventoryArea.setText(getInventoryText());
+                tableView.getItems().setAll(manager.getAllProducts());
                 updateIDField.clear();
                 updateQtyField.clear();
             } catch (NumberFormatException ex) {
-                inventoryArea.setText("Please enter a valid quantity to restock.");
+                showAlert("Invalid Input", "Please enter a valid quantity to restock.",
+                        Alert.AlertType.ERROR);
             }
             manager.saveInventory();
         });
-        VBox layout = new VBox(10);
+
+        tableView.setRowFactory(tv -> new TableRow<>() {
+            @Override
+            protected void updateItem(Product product, boolean empty) {
+                super.updateItem(product, empty);
+                if (product == null || empty) {
+                    setStyle("");
+                } else if (product.isLowStock()) {
+                    setStyle("-fx-background-color: #ffe0e0;");
+                } else {
+                    setStyle("");
+                }
+            }
+        });
+
+        GridPane updateSection = new GridPane();
+        updateSection.setHgap(10);
+        updateSection.setVgap(10);
+
+        updateSection.add(updateLabel, 0, 0);
+        updateSection.add(updateIDLabel, 0, 1);
+        updateSection.add(updateIDField, 1, 1);
+        updateSection.add(updateQtyLabel, 0, 2);
+        updateSection.add(updateQtyField, 1, 2);
+        updateSection.add(sellButton, 0, 3);
+        updateSection.add(restockButton, 1, 3);
+
+        GridPane form = new GridPane();
+        form.setHgap(10);
+        form.setVgap(10);
+        form.setPadding(new Insets(10));
+
+        form.add(nameLabel, 0, 0);
+        form.add(nameField, 1, 0);
+        form.add(qtyLabel, 0, 1);
+        form.add(qtyField, 1, 1);
+        form.add(thresholdLabel, 0, 2);
+        form.add(thresholdField, 1, 2);
+        form.add(idLabel, 0, 3);
+        form.add(idField, 1, 3);
+        form.add(addButton, 1, 4);
+
+        VBox layout = new VBox(20);
         layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(
-                nameLabel, nameField,
-                qtyLabel, qtyField,
-                thresholdLabel, thresholdField,
-                idLabel, idField,
-                addButton, inventoryArea,
-                updateLabel, updateIDLabel,
-                updateIDField, updateQtyLabel,
-                updateQtyField, sellButton,
-                restockButton
-        );
+        layout.getChildren().addAll(form, tableView, updateSection);
+
         Scene scene = new Scene(layout, 600, 600);
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(e -> {
@@ -117,6 +168,14 @@ public class InventoryGUI extends Application {
             sb.append(p).append("\n");
         }
         return sb.toString();
+    }
+
+    private void showAlert(String title, String message, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     /**
