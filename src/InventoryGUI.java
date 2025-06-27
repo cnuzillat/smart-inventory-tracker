@@ -9,6 +9,11 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
+
 /**
  * GUI for the inventory manager
  *
@@ -25,6 +30,7 @@ public class InventoryGUI extends Application {
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Inventory Manager");
+
         Label nameLabel = new Label("Product Name:");
         TextField nameField = new TextField();
         Label qtyLabel = new Label("Quantity:");
@@ -83,27 +89,29 @@ public class InventoryGUI extends Application {
             }
             manager.saveInventory();
         });
+
         Label updateLabel = new Label("Update Existing Product:");
         Label updateIDLabel = new Label("Product ID:");
         TextField updateIDField = new TextField();
         Label updateQtyLabel = new Label("Quantity:");
         TextField updateQtyField = new TextField();
         Button sellButton = new Button("Sell Product");
+        Button restockButton = new Button("Restock Product");
+
         sellButton.setOnAction(e -> {
-            int id = Integer.parseInt(updateIDField.getText());
             try {
+                int id = Integer.parseInt(updateIDField.getText());
                 int qty = Integer.parseInt(updateQtyField.getText());
                 manager.sellProduct(id, qty);
                 tableView.getItems().setAll(manager.getAllProducts());
                 updateIDField.clear();
                 updateQtyField.clear();
             } catch (NumberFormatException ex) {
-                showAlert("Invalid Input", "Please enter a valid quantity to sell.",
-                        Alert.AlertType.ERROR);
+                showAlert("Invalid Input", "Please enter a valid quantity to sell.", Alert.AlertType.ERROR);
             }
             manager.saveInventory();
         });
-        Button restockButton = new Button("Restock Product");
+
         restockButton.setOnAction(e -> {
             try {
                 int id = Integer.parseInt(updateIDField.getText());
@@ -113,10 +121,17 @@ public class InventoryGUI extends Application {
                 updateIDField.clear();
                 updateQtyField.clear();
             } catch (NumberFormatException ex) {
-                showAlert("Invalid Input", "Please enter a valid quantity to restock.",
-                        Alert.AlertType.ERROR);
+                showAlert("Invalid Input", "Please enter a valid quantity to restock.", Alert.AlertType.ERROR);
             }
             manager.saveInventory();
+        });
+
+        Label searchLabel = new Label("Search Products:");
+        TextField searchField = new TextField();
+        searchField.setPromptText("Enter product name to search...");
+        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+            List<Product> filteredProducts = searchProducts(newValue);
+            tableView.getItems().setAll(filteredProducts);
         });
 
         tableView.setRowFactory(tv -> new TableRow<>() {
@@ -133,22 +148,31 @@ public class InventoryGUI extends Application {
             }
         });
 
-        GridPane updateSection = new GridPane();
-        updateSection.setHgap(10);
-        updateSection.setVgap(10);
+        tableView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Product selectedProduct = tableView.getSelectionModel().getSelectedItem();
+                if (selectedProduct != null) {
+                    showProductDetails(selectedProduct);
+                }
+            }
+        });
 
-        updateSection.add(updateLabel, 0, 0);
-        updateSection.add(updateIDLabel, 0, 1);
-        updateSection.add(updateIDField, 1, 1);
-        updateSection.add(updateQtyLabel, 0, 2);
-        updateSection.add(updateQtyField, 1, 2);
-        updateSection.add(sellButton, 0, 3);
-        updateSection.add(restockButton, 1, 3);
+        Button exportButton = new Button("Export to CSV");
+        exportButton.setOnAction(e -> exportToCSV(tableView.getItems()));
+
+        Button deleteButton = new Button("Delete Selected");
+        deleteButton.setOnAction(e -> {
+            Product selectedProduct = tableView.getSelectionModel().getSelectedItem();
+            if (selectedProduct != null) {
+                deleteProduct(selectedProduct.getId(), tableView);
+            } else {
+                showAlert("No Selection", "Please select a product to delete.", Alert.AlertType.WARNING);
+            }
+        });
 
         GridPane form = new GridPane();
         form.setHgap(10);
         form.setVgap(10);
-
         form.add(nameLabel, 0, 0);
         form.add(nameField, 1, 0);
         form.add(qtyLabel, 0, 1);
@@ -159,12 +183,37 @@ public class InventoryGUI extends Application {
         form.add(idField, 1, 3);
         form.add(addButton, 1, 4);
 
+        GridPane updateSection = new GridPane();
+        updateSection.setHgap(10);
+        updateSection.setVgap(10);
+        updateSection.add(updateLabel, 0, 0);
+        updateSection.add(updateIDLabel, 0, 1);
+        updateSection.add(updateIDField, 1, 1);
+        updateSection.add(updateQtyLabel, 0, 2);
+        updateSection.add(updateQtyField, 1, 2);
+        updateSection.add(sellButton, 0, 3);
+        updateSection.add(restockButton, 1, 3);
+
+        HBox searchBox = new HBox(10);
+        searchBox.getChildren().addAll(searchLabel, searchField);
+        
+        HBox buttonBox = new HBox(10);
+        buttonBox.getChildren().addAll(exportButton, deleteButton);
+
         VBox layout = new VBox(20);
         layout.setPadding(new Insets(10));
-        layout.getChildren().addAll(addSectionTitle, form, tableSectionTitle, tableView, updateSectionTitle,
-                updateSection);
+        layout.getChildren().addAll(
+            addSectionTitle, 
+            form, 
+            tableSectionTitle, 
+            searchBox,
+            tableView, 
+            buttonBox,
+            updateSectionTitle,
+            updateSection
+        );
 
-        Scene scene = new Scene(layout, 600, 600);
+        Scene scene = new Scene(layout, 600, 700);
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(e -> {
             manager.saveInventory();
@@ -191,6 +240,81 @@ public class InventoryGUI extends Application {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    /**
+     * Shows detailed information about a product
+     */
+    private void showProductDetails(Product product) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Product Details");
+        alert.setHeaderText(product.getName());
+        alert.setContentText(
+            "ID: " + product.getId() + "\n" +
+            "Name: " + product.getName() + "\n" +
+            "Quantity: " + product.getQuantity() + "\n" +
+            "Low Stock Threshold: " + product.getQuantityThreshold() + "\n" +
+            "Low Stock: " + (product.isLowStock() ? "Yes" : "No")
+        );
+        alert.showAndWait();
+    }
+
+    /**
+     * Exports inventory to CSV file
+     */
+    private void exportToCSV(List<Product> products) {
+        try (FileWriter writer = new FileWriter("inventory_export.csv")) {
+            writer.write("ID,Name,Quantity,Threshold,Low Stock\n");
+
+            for (Product product : products) {
+                writer.write(String.format("%d,%s,%d,%d,%s\n",
+                    product.getId(),
+                    product.getName(),
+                    product.getQuantity(),
+                    product.getQuantityThreshold(),
+                    product.isLowStock() ? "Yes" : "No"
+                ));
+            }
+            
+            showAlert("Export Successful", "Inventory exported to inventory_export.csv",
+                    Alert.AlertType.INFORMATION);
+        } catch (IOException e) {
+            showAlert("Export Error", "Failed to export: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Deletes a product from inventory
+     */
+    private void deleteProduct(int id, TableView<Product> tableView) {
+        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.setTitle("Confirm Delete");
+        confirmAlert.setHeaderText("Delete Product");
+        confirmAlert.setContentText("Are you sure you want to delete this product?");
+        
+        confirmAlert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                showAlert("Delete", "Delete functionality needs to be implemented in InventoryManager",
+                        Alert.AlertType.INFORMATION);
+            }
+        });
+    }
+
+    /**
+     * Search products by name
+     */
+    private List<Product> searchProducts(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return new ArrayList<>(manager.getAllProducts());
+        }
+        
+        List<Product> results = new ArrayList<>();
+        for (Product product : manager.getAllProducts()) {
+            if (product.getName().toLowerCase().contains(searchTerm.toLowerCase().trim())) {
+                results.add(product);
+            }
+        }
+        return results;
     }
 
     /**

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.ArrayList;
 
 /**
  * Manages the inventory of a product
@@ -118,9 +119,18 @@ public class InventoryManager {
         return inventory.values();
     }
 
+    /**
+     * Searches for products by name
+     * @param searchTerm the search term
+     * @return list of matching products
+     */
     public List<Product> searchProducts(String searchTerm) {
+        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+            return new ArrayList<>(inventory.values());
+        }
+        
         return inventory.values().stream()
-            .filter(p -> p.getName().toLowerCase().contains(searchTerm.toLowerCase()))
+            .filter(p -> p.getName().toLowerCase().contains(searchTerm.toLowerCase().trim()))
             .collect(Collectors.toList());
     }
 
@@ -130,8 +140,18 @@ public class InventoryManager {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Deletes a product from inventory
+     * @param id the product ID to delete
+     * @return true if product was deleted, false if not found
+     */
     public boolean deleteProduct(int id) {
-        return inventory.remove(id) != null;
+        Product removed = inventory.remove(id);
+        if (removed != null) {
+            saveInventory(); // Auto-save after deletion
+            return true;
+        }
+        return false;
     }
 
     public boolean productExists(int id) {
