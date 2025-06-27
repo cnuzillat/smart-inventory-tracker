@@ -2,6 +2,7 @@ package src;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * Class representation of a product
@@ -15,6 +16,10 @@ public class Product implements Serializable {
     private int quantity;
     private final int quantityThreshold;
     private final int id;
+    private double price;
+    private String category;
+    private LocalDateTime lastUpdated;
+    private String description;
 
     /**
      * Product constructor
@@ -115,5 +120,37 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return name + ": " + quantity + " (Low threshold: " + quantityThreshold + ") - " + id;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public LocalDateTime getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(LocalDateTime lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

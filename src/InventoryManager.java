@@ -3,6 +3,8 @@ package src;
 import java.io.*;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Manages the inventory of a product
@@ -114,5 +116,25 @@ public class InventoryManager {
      */
     public Collection<Product> getAllProducts() {
         return inventory.values();
+    }
+
+    public List<Product> searchProducts(String searchTerm) {
+        return inventory.values().stream()
+            .filter(p -> p.getName().toLowerCase().contains(searchTerm.toLowerCase()))
+            .collect(Collectors.toList());
+    }
+
+    public List<Product> getProductsByCategory(String category) {
+        return inventory.values().stream()
+            .filter(p -> category.equals(p.getCategory()))
+            .collect(Collectors.toList());
+    }
+
+    public boolean deleteProduct(int id) {
+        return inventory.remove(id) != null;
+    }
+
+    public boolean productExists(int id) {
+        return inventory.containsKey(id);
     }
 }
