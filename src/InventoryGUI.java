@@ -10,7 +10,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -130,7 +129,7 @@ public class InventoryGUI extends Application {
         TextField searchField = new TextField();
         searchField.setPromptText("Enter product name to search...");
         searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            List<Product> filteredProducts = searchProducts(newValue);
+            List<Product> filteredProducts = manager.searchProducts(newValue);
             tableView.getItems().setAll(filteredProducts);
         });
 
@@ -294,27 +293,14 @@ public class InventoryGUI extends Application {
         
         confirmAlert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                showAlert("Delete", "Delete functionality needs to be implemented in InventoryManager",
-                        Alert.AlertType.INFORMATION);
+                if (manager.deleteProduct(id)) {
+                    tableView.getItems().setAll(manager.getAllProducts());
+                    showAlert("Success", "Product deleted successfully", Alert.AlertType.INFORMATION);
+                } else {
+                    showAlert("Error", "Product not found", Alert.AlertType.ERROR);
+                }
             }
         });
-    }
-
-    /**
-     * Search products by name
-     */
-    private List<Product> searchProducts(String searchTerm) {
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return new ArrayList<>(manager.getAllProducts());
-        }
-        
-        List<Product> results = new ArrayList<>();
-        for (Product product : manager.getAllProducts()) {
-            if (product.getName().toLowerCase().contains(searchTerm.toLowerCase().trim())) {
-                results.add(product);
-            }
-        }
-        return results;
     }
 
     /**
