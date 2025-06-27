@@ -47,18 +47,24 @@ public class InventoryGUI extends Application {
         TableView<Product> tableView = new TableView<>();
         TableColumn<Product, String> nameCol = new TableColumn<>("Name");
         nameCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getName()));
+        nameCol.setPrefWidth(100);
 
         TableColumn<Product, Integer> qtyCol = new TableColumn<>("Quantity");
         qtyCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getQuantity()).asObject());
+        qtyCol.setPrefWidth(100);
 
         TableColumn<Product, Integer> thresholdCol = new TableColumn<>("Threshold");
         thresholdCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getQuantityThreshold()).asObject());
+        thresholdCol.setPrefWidth(100);
 
         TableColumn<Product, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId()).asObject());
+        idCol.setPrefWidth(100);
 
         tableView.getColumns().addAll(nameCol, qtyCol, thresholdCol, idCol);
         tableView.getItems().addAll(manager.getAllProducts());
+
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
 
         addButton.setOnAction(e -> {
             try {

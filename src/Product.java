@@ -24,7 +24,20 @@ public class Product implements Serializable {
      * @param threshold what quantity amount is considered low stock
      */
     public Product(String name, int quantity, int threshold, int id) {
-        this.name = name;
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Product name cannot be empty");
+        }
+        if (quantity < 0) {
+            throw new IllegalArgumentException("Quantity cannot be negative");
+        }
+        if (threshold < 0) {
+            throw new IllegalArgumentException("Threshold cannot be negative");
+        }
+        if (id < 0) {
+            throw new IllegalArgumentException("ID cannot be negative");
+        }
+        
+        this.name = name.trim();
         this.quantity = quantity;
         this.quantityThreshold = threshold;
         this.id = id;
