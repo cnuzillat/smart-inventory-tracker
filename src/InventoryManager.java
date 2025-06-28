@@ -113,10 +113,10 @@ public class InventoryManager {
 
     /**
      * Returns the entire inventory
-     * @return all products
+     * @return all products as a List
      */
-    public Collection<Product> getAllProducts() {
-        return inventory.values();
+    public List<Product> getAllProducts() {
+        return new ArrayList<>(inventory.values());
     }
 
     /**
