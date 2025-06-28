@@ -89,11 +89,14 @@ public class Product implements Serializable {
      * Sells a certain amount of a product (reduces the quantity)
      */
     public void sell(int amount) {
-        if (amount <= quantity) {
-            quantity -= amount;
-        } else {
-            System.out.println("Not enough stock to sell " + amount + " of " + name);
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Sell amount must be positive");
         }
+        if (amount > quantity) {
+            throw new IllegalArgumentException("Cannot sell more than available stock");
+        }
+        quantity -= amount;
+        lastUpdated = LocalDateTime.now();
     }
 
     /**
@@ -152,5 +155,16 @@ public class Product implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void updatePrice(double newPrice) {
+        if (newPrice >= 0) {
+            this.price = newPrice;
+            this.lastUpdated = LocalDateTime.now();
+        }
+    }
+
+    public double getTotalValue() {
+        return price * quantity;
     }
 }

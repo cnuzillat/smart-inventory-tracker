@@ -148,7 +148,7 @@ public class InventoryManager {
     public boolean deleteProduct(int id) {
         Product removed = inventory.remove(id);
         if (removed != null) {
-            saveInventory(); // Auto-save after deletion
+            saveInventory();
             return true;
         }
         return false;
@@ -156,5 +156,18 @@ public class InventoryManager {
 
     public boolean productExists(int id) {
         return inventory.containsKey(id);
+    }
+
+    public List<String> getAllCategories() {
+        return inventory.values().stream()
+            .map(Product::getCategory)
+            .distinct()
+            .collect(Collectors.toList());
+    }
+
+    public double getTotalInventoryValue() {
+        return inventory.values().stream()
+            .mapToDouble(Product::getTotalValue)
+            .sum();
     }
 }
