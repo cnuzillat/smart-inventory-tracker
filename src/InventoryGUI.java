@@ -364,6 +364,18 @@ public class InventoryGUI extends Application {
             updateTableItems(filteredProducts);
         });
 
+        categoryFilter.setOnAction(e -> {
+            String selectedCategory = categoryFilter.getValue();
+            if (selectedCategory != null && !selectedCategory.equals("All Categories")) {
+                List<Product> filteredProducts = manager.getAllProducts().stream()
+                    .filter(product -> selectedCategory.equals(product.getCategory()))
+                    .collect(java.util.stream.Collectors.toList());
+                updateTableItems(filteredProducts);
+            } else {
+                refreshTable();
+            }
+        });
+
         exportButton.setOnAction(e -> exportToCSV(getCurrentTableItems()));
 
         refreshButton.setOnAction(e -> {
@@ -389,6 +401,12 @@ public class InventoryGUI extends Application {
         tableView.setPrefHeight(400);
         tableView.setMinHeight(200);
 
+        TableColumn<Product, Integer> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(cellData ->
+                new SimpleIntegerProperty(cellData.getValue().getId()).asObject());
+        idCol.setPrefWidth(60);
+        idCol.setMinWidth(50);
+        
         TableColumn<Product, String> nameCol = new TableColumn<>("Product Name");
         nameCol.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getName()));
@@ -425,7 +443,7 @@ public class InventoryGUI extends Application {
         thresholdCol.setPrefWidth(80);
         thresholdCol.setMinWidth(60);
 
-        tableView.getColumns().addAll(nameCol, qtyCol, priceCol, categoryCol, valueCol, thresholdCol);
+        tableView.getColumns().addAll(idCol, nameCol, qtyCol, priceCol, categoryCol, valueCol, thresholdCol);
 
         List<Product> products = manager.getAllProducts();
         System.out.println("Loading " + products.size() + " products into table");
