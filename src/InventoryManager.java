@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 /**
- * Manages the inventory of a product
+ * Manages the inventory of products
  *
  * @author Chloe Nuzillat
  */
@@ -52,6 +52,7 @@ public class InventoryManager {
      * @param name the name of the product
      * @param quantity the amount of product in stock
      * @param quantityThreshold the threshold that determines if a product is low stock
+     * @param id the unique identifier for the product
      */
     public void addProduct(String name, int quantity, int quantityThreshold, int id) {
         inventory.put(id, new Product(name, quantity, quantityThreshold, id));
@@ -61,7 +62,7 @@ public class InventoryManager {
      * Removes a certain amount of product from the inventory
      *
      * @param id the id of the product
-     * @param quantity the amount of product in stock
+     * @param quantity the amount of product to sell
      */
     public void sellProduct(int id, int quantity) {
         Product product = inventory.get(id);
@@ -79,7 +80,7 @@ public class InventoryManager {
     /**
      * Adds a certain amount of product to the inventory
      *
-     * @param quantity the amount of product in stock
+     * @param quantity the amount of product to restock
      * @param id the id of the product
      */
     public void restockProduct(int quantity, int id) {
@@ -99,20 +100,20 @@ public class InventoryManager {
     }
 
     /**
-     * Prints out all low stock items
+     * Shows all products that are low on stock
      */
     public void showLowStockItems() {
-        System.out.println("Low stock items:");
         for (Product product : inventory.values()) {
             if (product.isLowStock()) {
-                System.out.println(product);
+                System.out.println("Low stock: " + product.getName() + " - Quantity: " + product.getQuantity());
             }
         }
     }
 
     /**
-     * Returns the entire inventory
-     * @return all products as a List
+     * Gets all products in the inventory
+     *
+     * @return a list of all products
      */
     public List<Product> getAllProducts() {
         return new ArrayList<>(inventory.values());
@@ -120,53 +121,70 @@ public class InventoryManager {
 
     /**
      * Searches for products by name
-     * @param searchTerm the search term
-     * @return list of matching products
+     *
+     * @param searchTerm the term to search for
+     * @return a list of products matching the search term
      */
     public List<Product> searchProducts(String searchTerm) {
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
-            return new ArrayList<>(inventory.values());
-        }
-        
         return inventory.values().stream()
-            .filter(p -> p.getName().toLowerCase().contains(searchTerm.toLowerCase().trim()))
-            .collect(Collectors.toList());
-    }
-
-    public List<Product> getProductsByCategory(String category) {
-        return inventory.values().stream()
-            .filter(p -> category.equals(p.getCategory()))
-            .collect(Collectors.toList());
+                .filter(product -> product.getName().toLowerCase().contains(searchTerm.toLowerCase()))
+                .collect(Collectors.toList());
     }
 
     /**
-     * Deletes a product from inventory
-     * @param id the product ID to delete
-     * @return true if product was deleted, false if not found
+     * Gets all products in a specific category
+     *
+     * @param category the category to filter by
+     * @return a list of products in the specified category
+     */
+    public List<Product> getProductsByCategory(String category) {
+        return inventory.values().stream()
+                .filter(product -> category.equals(product.getCategory()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes a product from the inventory
+     *
+     * @param id the id of the product to delete
+     * @return true if the product was deleted, false if not found
      */
     public boolean deleteProduct(int id) {
         Product removed = inventory.remove(id);
-        if (removed != null) {
-            saveInventory();
-            return true;
-        }
-        return false;
+        return removed != null;
     }
 
+    /**
+     * Checks if a product exists in the inventory
+     *
+     * @param id the id of the product to check
+     * @return true if the product exists, false otherwise
+     */
     public boolean productExists(int id) {
         return inventory.containsKey(id);
     }
 
+    /**
+     * Gets all unique categories in the inventory
+     *
+     * @return a list of all categories
+     */
     public List<String> getAllCategories() {
         return inventory.values().stream()
-            .map(Product::getCategory)
-            .distinct()
-            .collect(Collectors.toList());
+                .map(Product::getCategory)
+                .filter(category -> category != null && !category.trim().isEmpty())
+                .distinct()
+                .collect(Collectors.toList());
     }
 
+    /**
+     * Calculates the total value of all products in the inventory
+     *
+     * @return the total inventory value
+     */
     public double getTotalInventoryValue() {
         return inventory.values().stream()
-            .mapToDouble(Product::getTotalValue)
-            .sum();
+                .mapToDouble(Product::getTotalValue)
+                .sum();
     }
 }

@@ -27,6 +27,7 @@ public class Product implements Serializable {
      * @param name the name of the product
      * @param quantity how much product is in stock
      * @param threshold what quantity amount is considered low stock
+     * @param id the unique identifier for the product
      */
     public Product(String name, int quantity, int threshold, int id) {
         if (name == null || name.trim().isEmpty()) {
@@ -67,7 +68,6 @@ public class Product implements Serializable {
     }
 
     /**
-     *
      * Gets the id of the product
      *
      * @return the id
@@ -87,6 +87,9 @@ public class Product implements Serializable {
 
     /**
      * Sells a certain amount of a product (reduces the quantity)
+     *
+     * @param amount the amount to sell
+     * @throws IllegalArgumentException if amount is not positive or exceeds available stock
      */
     public void sell(int amount) {
         if (amount <= 0) {
@@ -101,6 +104,8 @@ public class Product implements Serializable {
 
     /**
      * Restocks a certain amount of a product (adds to the quantity)
+     *
+     * @param amount the amount to restock
      */
     public void restock(int amount) {
         quantity = quantity + amount;
@@ -125,38 +130,74 @@ public class Product implements Serializable {
         return name + ": " + quantity + " (Low threshold: " + quantityThreshold + ") - " + id;
     }
 
+    /**
+     * Gets the price of the product
+     *
+     * @return the price
+     */
     public double getPrice() {
         return price;
     }
 
+    /**
+     * Sets the price of the product
+     *
+     * @param price the new price
+     */
     public void setPrice(double price) {
         this.price = price;
     }
 
+    /**
+     * Gets the category of the product
+     *
+     * @return the category
+     */
     public String getCategory() {
         return category;
     }
 
+    /**
+     * Sets the category of the product
+     *
+     * @param category the new category
+     */
     public void setCategory(String category) {
         this.category = category;
     }
 
+    /**
+     * Gets the last updated timestamp
+     *
+     * @return the last updated timestamp
+     */
     public LocalDateTime getLastUpdated() {
         return lastUpdated;
     }
 
-    public void setLastUpdated(LocalDateTime lastUpdated) {
-        this.lastUpdated = lastUpdated;
-    }
-
+    /**
+     * Gets the description of the product
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the description of the product
+     *
+     * @param description the new description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Updates the price of the product and sets the last updated timestamp
+     *
+     * @param newPrice the new price (must be non-negative)
+     */
     public void updatePrice(double newPrice) {
         if (newPrice >= 0) {
             this.price = newPrice;
@@ -164,6 +205,11 @@ public class Product implements Serializable {
         }
     }
 
+    /**
+     * Calculates the total value of the product (price * quantity)
+     *
+     * @return the total value
+     */
     public double getTotalValue() {
         return price * quantity;
     }

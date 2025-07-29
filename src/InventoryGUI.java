@@ -33,6 +33,11 @@ public class InventoryGUI extends Application {
     private Label lowStockLabel;
     private Label categoriesLabel;
 
+    /**
+     * Starts the JavaFX application
+     *
+     * @param primaryStage the primary stage for the application
+     */
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Smart Inventory Tracker");
@@ -51,6 +56,11 @@ public class InventoryGUI extends Application {
         System.out.println("Inventory items: " + manager.getAllProducts());
     }
 
+    /**
+     * Creates a scrollable main layout for the application
+     *
+     * @return the scroll pane containing the main layout
+     */
     private ScrollPane createScrollableMainLayout() {
         VBox mainLayout = createMainLayout();
         
@@ -64,6 +74,11 @@ public class InventoryGUI extends Application {
         return scrollPane;
     }
 
+    /**
+     * Creates the main layout of the application
+     *
+     * @return the main VBox layout
+     */
     private VBox createMainLayout() {
         VBox mainLayout = new VBox(15);
         mainLayout.setPadding(new Insets(15));
@@ -80,6 +95,11 @@ public class InventoryGUI extends Application {
         return mainLayout;
     }
 
+    /**
+     * Creates the header section of the application
+     *
+     * @return the header HBox
+     */
     private HBox createHeader() {
         HBox header = new HBox();
         header.setAlignment(Pos.CENTER_LEFT);
@@ -92,6 +112,11 @@ public class InventoryGUI extends Application {
         return header;
     }
 
+    /**
+     * Creates the responsive dashboard section
+     *
+     * @return the dashboard VBox
+     */
     private VBox createResponsiveDashboard() {
         dashboard = new VBox(10);
 
@@ -125,6 +150,11 @@ public class InventoryGUI extends Application {
         return dashboard;
     }
 
+    /**
+     * Creates the responsive content area for the main application
+     *
+     * @return the content area VBox
+     */
     private VBox createResponsiveContentArea() {
         VBox contentArea = new VBox(15);
 
@@ -143,9 +173,15 @@ public class InventoryGUI extends Application {
         return contentArea;
     }
 
+    /**
+     * Creates the left panel for product management
+     *
+     * @return the left panel VBox
+     */
     private VBox createResponsiveLeftPanel() {
         VBox leftPanel = new VBox(15);
-        leftPanel.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 20px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        leftPanel.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 20px; -fx-effect: " +
+                "dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
 
         VBox addProductSection = createAddProductSection();
 
@@ -157,9 +193,15 @@ public class InventoryGUI extends Application {
         return leftPanel;
     }
 
+    /**
+     * Creates the right panel for displaying the inventory table
+     *
+     * @return the right panel VBox
+     */
     private VBox createResponsiveRightPanel() {
         VBox rightPanel = new VBox(15);
-        rightPanel.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 20px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        rightPanel.setStyle("-fx-background-color: white; -fx-background-radius: 8px; -fx-padding: 20px; -fx-effect: " +
+                "dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
         
         Label title = new Label("Current Inventory");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #212529;");
@@ -172,9 +214,18 @@ public class InventoryGUI extends Application {
         return rightPanel;
     }
 
+    /**
+     * Creates a dashboard card with specified label, value, and color
+     *
+     * @param label the label for the card
+     * @param value the value to display
+     * @param color the background color
+     * @return the dashboard card VBox
+     */
     private VBox createDashboardCard(String label, String value, String color) {
         VBox card = new VBox(10);
-        card.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-padding: 15px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+        card.setStyle("-fx-background-color: white; -fx-background-radius: 10px; -fx-padding: 15px; -fx-effect: " +
+                "dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
         card.setAlignment(Pos.CENTER);
         card.setMinWidth(150);
         card.setMaxWidth(200);
@@ -190,6 +241,11 @@ public class InventoryGUI extends Application {
         return card;
     }
 
+    /**
+     * Creates the add product section
+     *
+     * @return the add product section VBox
+     */
     private VBox createAddProductSection() {
         VBox section = new VBox(15);
         section.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 6px; -fx-padding: 15px;");
@@ -209,7 +265,8 @@ public class InventoryGUI extends Application {
         TextField categoryField = createStyledTextField("Category");
         
         Button addButton = new Button("Add Product");
-        addButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 10px 20px; -fx-font-weight: bold;");
+        addButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6px; " +
+                "-fx-padding: 10px 20px; -fx-font-weight: bold;");
 
         form.add(new Label("Name:"), 0, 0);
         form.add(nameField, 1, 0);
@@ -268,6 +325,11 @@ public class InventoryGUI extends Application {
         return section;
     }
 
+    /**
+     * Creates the update product section
+     *
+     * @return the update product section VBox
+     */
     private VBox createUpdateProductSection() {
         VBox section = new VBox(15);
         section.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 6px; -fx-padding: 15px;");
@@ -286,8 +348,10 @@ public class InventoryGUI extends Application {
         Button sellButton = new Button("Sell Product");
         Button restockButton = new Button("Restock Product");
         
-        sellButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 10px 20px; -fx-font-weight: bold;");
-        restockButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 10px 20px; -fx-font-weight: bold;");
+        sellButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 6px; " +
+                "-fx-padding: 10px 20px; -fx-font-weight: bold;");
+        restockButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-background-radius: 6px; " +
+                "-fx-padding: 10px 20px; -fx-font-weight: bold;");
         
         buttonBox.getChildren().addAll(sellButton, restockButton);
         
@@ -333,6 +397,11 @@ public class InventoryGUI extends Application {
         return section;
     }
 
+    /**
+     * Creates the search section
+     *
+     * @return the search section VBox
+     */
     private VBox createSearchSection() {
         VBox section = new VBox(15);
         section.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 6px; -fx-padding: 15px;");
@@ -353,13 +422,17 @@ public class InventoryGUI extends Application {
         Button refreshButton = new Button("Refresh");
         Button deleteButton = new Button("Delete Selected");
         
-        exportButton.setStyle("-fx-background-color: #007bff; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 10px 20px; -fx-font-weight: bold;");
-        refreshButton.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 10px 20px; -fx-font-weight: bold;");
-        deleteButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 6px; -fx-padding: 10px 20px; -fx-font-weight: bold;");
+        exportButton.setStyle("-fx-background-color: #007bff; -fx-text-fill: white; -fx-background-radius: 6px; " +
+                "-fx-padding: 10px 20px; -fx-font-weight: bold;");
+        refreshButton.setStyle("-fx-background-color: #6c757d; -fx-text-fill: white; -fx-background-radius: 6px; " +
+                "-fx-padding: 10px 20px; -fx-font-weight: bold;");
+        deleteButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-background-radius: 6px; " +
+                "-fx-padding: 10px 20px; -fx-font-weight: bold;");
         
         buttonBox.getChildren().addAll(exportButton, refreshButton, deleteButton);
 
-        searchField.textProperty().addListener((observable, oldValue, newValue) -> {
+        searchField.textProperty().addListener((observable, oldValue,
+                                                newValue) -> {
             List<Product> filteredProducts = manager.searchProducts(newValue);
             updateTableItems(filteredProducts);
         });
@@ -396,6 +469,11 @@ public class InventoryGUI extends Application {
         return section;
     }
 
+    /**
+     * Creates the main table view for displaying products
+     *
+     * @return the configured TableView
+     */
     private TableView<Product> createTableView() {
         TableView<Product> tableView = new TableView<>();
         tableView.setPrefHeight(400);
@@ -477,14 +555,26 @@ public class InventoryGUI extends Application {
         return tableView;
     }
 
+    /**
+     * Creates a styled text field with the given prompt
+     *
+     * @param prompt the placeholder text
+     * @return the styled TextField
+     */
     private TextField createStyledTextField(String prompt) {
         TextField textField = new TextField();
         textField.setPromptText(prompt);
         textField.setPrefHeight(30);
-        textField.setStyle("-fx-background-color: white; -fx-border-color: #dee2e6; -fx-border-radius: 4px; -fx-padding: 6px 10px;");
+        textField.setStyle("-fx-background-color: white; -fx-border-color: #dee2e6; -fx-border-radius: 4px; " +
+                "-fx-padding: 6px 10px;");
         return textField;
     }
 
+    /**
+     * Shows detailed information about a product in a popup window
+     *
+     * @param product the product to show details for
+     */
     private void showProductDetails(Product product) {
         Stage detailStage = new Stage();
         detailStage.initModality(Modality.APPLICATION_MODAL);
@@ -519,7 +609,8 @@ public class InventoryGUI extends Application {
         detailsGrid.add(new Label("$" + String.format("%.2f", product.getPrice())), 1, 2);
         
         detailsGrid.add(new Label("Category:"), 0, 3);
-        detailsGrid.add(new Label(product.getCategory() != null ? product.getCategory() : "N/A"), 1, 3);
+        detailsGrid.add(new Label(product.getCategory() != null ? product.getCategory() : "N/A"), 1,
+                3);
         
         detailsGrid.add(new Label("Total Value:"), 0, 4);
         detailsGrid.add(new Label("$" + String.format("%.2f", product.getTotalValue())), 1, 4);
@@ -545,6 +636,13 @@ public class InventoryGUI extends Application {
         detailStage.showAndWait();
     }
 
+    /**
+     * Shows an alert dialog with the specified title, message, and type
+     *
+     * @param title the alert title
+     * @param message the alert message
+     * @param type the alert type
+     */
     private void showAlert(String title, String message, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -553,6 +651,11 @@ public class InventoryGUI extends Application {
         alert.showAndWait();
     }
 
+    /**
+     * Exports the current product list to a CSV file
+     *
+     * @param products the list of products to export
+     */
     private void exportToCSV(List<Product> products) {
         try (FileWriter writer = new FileWriter("inventory_export.csv")) {
             writer.write("ID,Name,Quantity,Price,Category,Threshold,Low Stock,Total Value\n");
@@ -570,12 +673,18 @@ public class InventoryGUI extends Application {
                 ));
             }
             
-            showAlert("Export Successful", "Inventory exported to inventory_export.csv", Alert.AlertType.INFORMATION);
+            showAlert("Export Successful", "Inventory exported to inventory_export.csv",
+                    Alert.AlertType.INFORMATION);
         } catch (IOException e) {
             showAlert("Export Error", "Failed to export: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
+    /**
+     * Deletes a product with the specified ID
+     *
+     * @param id the ID of the product to delete
+     */
     private void deleteProduct(int id) {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Delete");
@@ -596,6 +705,9 @@ public class InventoryGUI extends Application {
         });
     }
 
+    /**
+     * Refreshes the table view with current data
+     */
     private void refreshTable() {
         if (tableView != null) {
             tableView.getItems().clear();
@@ -604,6 +716,11 @@ public class InventoryGUI extends Application {
         }
     }
 
+    /**
+     * Updates the table items with the provided product list
+     *
+     * @param products the list of products to display
+     */
     private void updateTableItems(List<Product> products) {
         if (tableView != null) {
             tableView.getItems().clear();

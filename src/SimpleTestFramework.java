@@ -1,166 +1,166 @@
 package src;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * A simple testing framework for unit testing
+ *
+ * @author Chloe Nuzillat
+ */
 public class SimpleTestFramework {
-    
-    private static List<TestResult> testResults = new ArrayList<>();
     private static int totalTests = 0;
     private static int passedTests = 0;
     static int failedTests = 0;
 
-    private static class TestResult {
-        String testName;
-        boolean passed;
-        String message;
-        String expected;
-        String actual;
-        
-        TestResult(String testName, boolean passed, String message, String expected, String actual) {
-            this.testName = testName;
-            this.passed = passed;
-            this.message = message;
-            this.expected = expected;
-            this.actual = actual;
-        }
-    }
-
+    /**
+     * Asserts that two objects are equal
+     *
+     * @param expected the expected value
+     * @param actual the actual value
+     * @param testName the name of the test
+     */
     public static void assertEquals(Object expected, Object actual, String testName) {
         totalTests++;
-        boolean passed = (expected == null && actual == null) || 
-                        (expected != null && expected.equals(actual));
-        
-        if (passed) {
+        if (expected == null && actual == null) {
             passedTests++;
-            System.out.println("PASS: " + testName);
+            System.out.println("✓ " + testName);
+        } else if (expected != null && expected.equals(actual)) {
+            passedTests++;
+            System.out.println("✓ " + testName);
         } else {
             failedTests++;
-            String expectedStr = expected != null ? expected.toString() : "null";
-            String actualStr = actual != null ? actual.toString() : "null";
-            testResults.add(new TestResult(testName, false, "Values not equal", expectedStr, actualStr));
-            System.out.println("FAIL: " + testName + " - Expected: " + expectedStr + ", Actual: " + actualStr);
+            System.out.println("✗ " + testName + " - Expected: " + expected + ", Actual: " + actual);
         }
     }
 
+    /**
+     * Asserts that a condition is true
+     *
+     * @param condition the condition to check
+     * @param testName the name of the test
+     */
     public static void assertTrue(boolean condition, String testName) {
         totalTests++;
         if (condition) {
             passedTests++;
-            System.out.println("PASS: " + testName);
+            System.out.println("✓ " + testName);
         } else {
             failedTests++;
-            testResults.add(new TestResult(testName, false, "Condition was false", "true",
-                    "false"));
-            System.out.println("FAIL: " + testName + " - Condition was false");
+            System.out.println("✗ " + testName + " - Expected: true, Actual: false");
         }
     }
 
+    /**
+     * Asserts that a condition is false
+     *
+     * @param condition the condition to check
+     * @param testName the name of the test
+     */
     public static void assertFalse(boolean condition, String testName) {
         totalTests++;
         if (!condition) {
             passedTests++;
-            System.out.println("PASS: " + testName);
+            System.out.println("✓ " + testName);
         } else {
             failedTests++;
-            testResults.add(new TestResult(testName, false, "Condition was true", "false",
-                    "true"));
-            System.out.println("FAIL: " + testName + " - Condition was true");
+            System.out.println("✗ " + testName + " - Expected: false, Actual: true");
         }
     }
 
-    public static void assertNotNull(Object obj, String testName) {
+    /**
+     * Asserts that an object is not null
+     *
+     * @param object the object to check
+     * @param testName the name of the test
+     */
+    public static void assertNotNull(Object object, String testName) {
         totalTests++;
-        if (obj != null) {
+        if (object != null) {
             passedTests++;
-            System.out.println("PASS: " + testName);
+            System.out.println("✓ " + testName);
         } else {
             failedTests++;
-            testResults.add(new TestResult(testName, false, "Object was null", "not null",
-                    "null"));
-            System.out.println("FAIL: " + testName + " - Object was null");
+            System.out.println("✗ " + testName + " - Expected: not null, Actual: null");
         }
     }
 
-    public static void assertNull(Object obj, String testName) {
+    /**
+     * Asserts that an object is null
+     *
+     * @param object the object to check
+     * @param testName the name of the test
+     */
+    public static void assertNull(Object object, String testName) {
         totalTests++;
-        if (obj == null) {
+        if (object == null) {
             passedTests++;
-            System.out.println("PASS: " + testName);
+            System.out.println("✓ " + testName);
         } else {
             failedTests++;
-            testResults.add(new TestResult(testName, false, "Object was not null", "null",
-                    "not null"));
-            System.out.println("FAIL: " + testName + " - Object was not null");
+            System.out.println("✗ " + testName + " - Expected: null, Actual: " + object);
         }
     }
 
+    /**
+     * Asserts that a method throws a specific exception
+     *
+     * @param runnable the code to run
+     * @param expectedException the expected exception class name
+     * @param testName the name of the test
+     */
     public static void assertThrows(Runnable runnable, String expectedException, String testName) {
         totalTests++;
         try {
             runnable.run();
             failedTests++;
-            testResults.add(new TestResult(testName, false, "No exception thrown", expectedException,
-                    "no exception"));
-            System.out.println("FAIL: " + testName + " - Expected " + expectedException + " but no exception was thrown");
+            System.out.println("✗ " + testName + " - Expected exception: " + expectedException + ", but no exception was thrown");
         } catch (Exception e) {
-            if (e.getClass().getSimpleName().equals(expectedException) || 
-                e.getClass().getName().contains(expectedException)) {
+            if (e.getClass().getSimpleName().equals(expectedException)) {
                 passedTests++;
-                System.out.println("PASS: " + testName);
+                System.out.println("✓ " + testName);
             } else {
                 failedTests++;
-                testResults.add(new TestResult(testName, false, "Wrong exception type", expectedException,
-                        e.getClass().getSimpleName()));
-                System.out.println("FAIL: " + testName + " - Expected " + expectedException + " but got " +
-                        e.getClass().getSimpleName());
+                System.out.println("✗ " + testName + " - Expected exception: " + expectedException + ", Actual: " + e.getClass().getSimpleName());
             }
         }
     }
 
+    /**
+     * Asserts that a method does not throw an exception
+     *
+     * @param runnable the code to run
+     * @param testName the name of the test
+     */
     public static void assertDoesNotThrow(Runnable runnable, String testName) {
         totalTests++;
         try {
             runnable.run();
             passedTests++;
-            System.out.println("PASS: " + testName);
+            System.out.println("✓ " + testName);
         } catch (Exception e) {
             failedTests++;
-            testResults.add(new TestResult(testName, false, "Exception was thrown",
-                    "no exception", e.getClass().getSimpleName()));
-            System.out.println("FAIL: " + testName + " - Unexpected exception: " + e.getClass().getSimpleName());
+            System.out.println("✗ " + testName + " - Unexpected exception: " + e.getClass().getSimpleName() + ": " + e.getMessage());
         }
     }
 
-    public static void printSummary() {
-        System.out.println("\n" + "=".repeat(50));
-        System.out.println("TEST SUMMARY");
-        System.out.println("=".repeat(50));
-        System.out.println("Total Tests: " + totalTests);
-        System.out.println("Passed: " + passedTests);
-        System.out.println("Failed: " + failedTests);
-        System.out.println("Success Rate: " + (totalTests > 0 ? String.format("%.1f%%",
-                (double)passedTests/totalTests*100) : "0%"));
-        
-        if (failedTests > 0) {
-            System.out.println("\nFAILED TESTS:");
-            System.out.println("-".repeat(30));
-            for (TestResult result : testResults) {
-                if (!result.passed) {
-                    System.out.println("• " + result.testName);
-                    System.out.println("  Expected: " + result.expected);
-                    System.out.println("  Actual: " + result.actual);
-                    System.out.println();
-                }
-            }
-        }
-        
-        System.out.println("=".repeat(50));
-    }
-
+    /**
+     * Resets the test counters
+     */
     public static void reset() {
-        testResults.clear();
         totalTests = 0;
         passedTests = 0;
         failedTests = 0;
     }
-} 
+
+    /**
+     * Prints a summary of all test results
+     */
+    public static void printSummary() {
+        System.out.println("\n" + "=".repeat(40));
+        System.out.println("TEST SUMMARY");
+        System.out.println("=".repeat(40));
+        System.out.println("Total Tests: " + totalTests);
+        System.out.println("Passed: " + passedTests);
+        System.out.println("Failed: " + failedTests);
+        System.out.println("Success Rate: " + (totalTests > 0 ? String.format("%.1f%%", (double) passedTests / totalTests * 100) : "0%"));
+        System.out.println("=".repeat(40));
+    }
+}
